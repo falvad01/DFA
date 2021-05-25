@@ -12,7 +12,6 @@
 #include "BT.h"
 
 
-
 using std::vector;
 using std::string;
 using std::cout;
@@ -54,6 +53,30 @@ void BT<T>::insert(const T &value, Args...more) {
         }
     }
     insert(more...);
+}
+
+template<typename T>
+
+void BT<T>::insertSimple(T rootArg, T leaf1, T leaf2) {
+
+    root = new Node(rootArg);
+
+    root->left = new Node(leaf1);
+    root->right = new Node(leaf2);
+
+}
+
+template<typename T>
+
+void BT<T>::addLeft(BT bt) {
+
+        root->left = bt.root;
+
+}
+
+template<typename T>
+void BT<T>::addRight(BT bt) {
+    root->right = bt.root;
 }
 
 template<typename T>
@@ -251,7 +274,7 @@ void BT<T>::Dump() const {
     const int d = get_max_depth();
 
     // If this tree is empty, tell someone
-    if(d == 0) {
+    if (d == 0) {
         cout << " <empty tree>\n";
         return;
     }
@@ -263,7 +286,7 @@ void BT<T>::Dump() const {
     // then trim excess space characters from the left sides of the text...
     trim_rows_left(formatted_rows);
     // then dump the text to cout.
-    for(const auto& row : formatted_rows) {
+    for (const auto &row : formatted_rows) {
         std::cout << ' ' << row << '\n';
     }
 }
@@ -278,6 +301,12 @@ template<typename T>
 const int BT<T>::get_max_depth() const {
     return root ? root->max_depth() : 0;
 }
+
+
+
+
+
+
 
 
 

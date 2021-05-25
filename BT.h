@@ -38,16 +38,10 @@ class BT {
     struct Node {
         T value;
         Node *left, *right;
-
         Node() : left(nullptr), right(nullptr) {}
-
         Node(const T &value) : value(value), left(nullptr), right(nullptr) {}
 
-        // stack-abusing recursion everywhere, for small code
-        ~Node() {
-            delete left;
-            delete right;
-        }
+
 
         int max_depth() const {
             const int left_depth = left ? left->max_depth() : 0;
@@ -63,7 +57,16 @@ public:
 
     BT();
     ~BT();
-    void insert() {};
+    /**
+     *
+     * @param root
+     * @param leaf1
+     * @param leaf2
+     */
+    void insertSimple(T root,T leaf1, T leaf2);
+
+    void addLeft(BT bt);
+    void addRight(BT bt);
     template<typename ...Args>
     void insert(const T &value, Args...more);
     void clear();
@@ -72,9 +75,7 @@ public:
     const int get_max_depth() const;
 
 
-
 private:
-
 
     vector<string> row_formatter(const vector<vector<cell_display>> &rows_disp) const;
     static void trim_rows_left(vector<string>& rows);
