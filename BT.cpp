@@ -5,39 +5,25 @@
 #include <string>
 #include <iostream>
 #include <vector>
-
 #include <algorithm>
 #include <sstream>
-
 #include "BT.h"
 
 
-using std::vector;
-using std::string;
-using std::cout;
+
 using display_rows = vector<vector<cell_display>>;
 using s_t = string::size_type;
+using namespace std;
+
+BT::BT() : root(nullptr) {}
 
 
-
-
-
-////////////////////////////////////////
-
-
-
-template<typename T>
-BT<T>::BT(): root(nullptr) {}
-
-
-template<typename T>
-BT<T>::~BT() {
+BT::~BT() {
     delete root;
 }
 
-template<typename T>
 template<typename ...Args>
-void BT<T>::insert(const T &value, Args...more) {
+void BT::insert(const char &value, Args...more) {
     if (!root) {
         root = new Node(value);
     } else {
@@ -55,9 +41,8 @@ void BT<T>::insert(const T &value, Args...more) {
     insert(more...);
 }
 
-template<typename T>
 
-void BT<T>::insertSimple(T rootArg, T leaf1, T leaf2) {
+void BT::insertSimple(char rootArg, char leaf1, char leaf2) {
 
     root = new Node(rootArg);
 
@@ -66,25 +51,24 @@ void BT<T>::insertSimple(T rootArg, T leaf1, T leaf2) {
 
 }
 
-template<typename T>
 
-void BT<T>::addLeft(BT bt) {
+void BT::addLeft(const BT& bt) {
 
-        root->left = bt.root;
+    this->root->left = bt.root;
 
 }
 
-template<typename T>
-void BT<T>::addRight(BT bt) {
-    root->right = bt.root;
+
+void BT::addRight(const BT& bt) {
+    this->root->right = bt.root;
 }
 
-template<typename T>
-display_rows BT<T>::get_row_display() const {
+
+display_rows BT::get_row_display() const {
     // start off by traversing the tree to
     // build a vector of vectors of Node pointers
     vector<Node *> traversal_stack;
-    vector<std::vector<Node *> > rows;
+    vector<  vector<Node *> > rows;
     if (!root) return display_rows();
 
     Node *p = root;
@@ -133,16 +117,16 @@ display_rows BT<T>::get_row_display() const {
     // so if there is no actual Node at a struct's location,
     // its boolean "present" field is set to false.
     // The struct also contains a string representation of
-    // its Node's value, created using a std::stringstream object.
+    // its Node's value, created using a   stringstream object.
     display_rows rows_disp;
-    std::stringstream ss;
+      stringstream ss;
     for (const auto &row : rows) {
         rows_disp.emplace_back();
         for (Node *pn : row) {
             if (pn) {
                 ss << pn->value;
                 rows_disp.back().push_back(cell_display(ss.str()));
-                ss = std::stringstream();
+                ss =   stringstream();
             } else {
                 rows_disp.back().push_back(cell_display());
             }
@@ -152,8 +136,8 @@ display_rows BT<T>::get_row_display() const {
 
 }
 
-template<typename T>
-vector<string> BT<T>::row_formatter(const display_rows &rows_disp) const {
+
+vector<string> BT::row_formatter(const display_rows &rows_disp) const {
 
     // First find the maximum value string length and put it in cell_width
     s_t cell_width = 0;
@@ -246,15 +230,15 @@ vector<string> BT<T>::row_formatter(const display_rows &rows_disp) const {
     }
 
     // Reverse the result, placing the root node at the beginning (top)
-    std::reverse(formatted_rows.begin(), formatted_rows.end());
+      reverse(formatted_rows.begin(), formatted_rows.end());
 
     return formatted_rows;
 
 
 }
 
-template<typename T>
-void BT<T>::trim_rows_left(vector<string> &rows) {
+
+void BT::trim_rows_left(vector<string> &rows) {
     if (!rows.size()) return;
     auto min_space = rows.front().length();
     for (const auto &row : rows) {
@@ -269,8 +253,8 @@ void BT<T>::trim_rows_left(vector<string> &rows) {
 
 }
 
-template<typename T>
-void BT<T>::Dump() const {
+
+void BT::Dump() const {
     const int d = get_max_depth();
 
     // If this tree is empty, tell someone
@@ -287,18 +271,18 @@ void BT<T>::Dump() const {
     trim_rows_left(formatted_rows);
     // then dump the text to cout.
     for (const auto &row : formatted_rows) {
-        std::cout << ' ' << row << '\n';
+        cout << ' ' << row << '\n';
     }
 }
 
-template<typename T>
-void BT<T>::clear() {
+
+void BT::clear() {
     delete root;
     root = nullptr;
 }
 
-template<typename T>
-const int BT<T>::get_max_depth() const {
+
+const int BT::get_max_depth() const {
     return root ? root->max_depth() : 0;
 }
 

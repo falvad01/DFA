@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "BT.h"
+
 
 using std::vector;
 using std::string;
@@ -26,21 +26,18 @@ struct cell_display {
 };
 
 
-using display_rows = vector< vector< cell_display > >;
+using display_rows = vector<vector<cell_display> >;
 
-
-template<typename T>
 
 class BT {
 
-
-
     struct Node {
-        T value;
+        char value;
         Node *left, *right;
-        Node() : left(nullptr), right(nullptr) {}
-        Node(const T &value) : value(value), left(nullptr), right(nullptr) {}
 
+        Node() : left(nullptr), right(nullptr) {}
+
+        Node(const char &value) : value(value), left(nullptr), right(nullptr) {}
 
 
         int max_depth() const {
@@ -50,35 +47,38 @@ class BT {
         }
     };
 
-    Node *root;
 
 public:
+    Node *root;
 
 
     BT();
-    ~BT();
-    /**
-     *
-     * @param root
-     * @param leaf1
-     * @param leaf2
-     */
-    void insertSimple(T root,T leaf1, T leaf2);
 
-    void addLeft(BT bt);
-    void addRight(BT bt);
+    ~BT();
+
+    void insertSimple(char root, char leaf1, char leaf2);
+
+    void addLeft(const BT& bt);
+
+    void addRight(const BT& bt);
+
     template<typename ...Args>
-    void insert(const T &value, Args...more);
+    void insert(const char &value, Args...more);
+
     void clear();
+
     display_rows get_row_display() const;
+
     void Dump() const;
+
     const int get_max_depth() const;
 
 
 private:
 
     vector<string> row_formatter(const vector<vector<cell_display>> &rows_disp) const;
-    static void trim_rows_left(vector<string>& rows);
+
+    static void trim_rows_left(vector<string> &rows);
 };
 
 
