@@ -5,6 +5,7 @@
 #include <cstring>
 
 using namespace std;
+void recursive(Node *node, vector<string> splits);
 
 
 vector<string> analiceRe(string re) {
@@ -77,13 +78,50 @@ int main() {
     }
 
 
-    BT mainTree;
-
-
-    mainTree.insertSimple('.', NULL, stringToChar(splits[splits.size() - 1]));
-
 
    // mainTree.Dump();
+
+   // recursive(mainTree->root,splits);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    BT bt;
+
+    bt.root= new Node('z');
+
+    Node *b= new Node('b');
+    Node *c= new Node('c');
+    bt.root->left=b;
+    bt.root->right=c;
+    bt.root->right->value='x';
+    Node *d= new Node('d');
+    bt.insertRoot(d);
+
+
+
+
+
+
+    cout << "Tree 1 from OP:\n\n";
+    bt.Dump();
+    cout << "\n\n";
+
+
+
+
+
+}
+void recursive(Node *node, vector<string> splits) {
 
     for (int i = splits.size() - 1; i >= 0; i--) {
 
@@ -92,68 +130,34 @@ int main() {
         vector<char> charArray = stringToCharVector(splits[i]);
         for (char j : charArray) {
 
-            if(j == '*'){
+            if (j == '*') {
                 haveAste = true;
             }
         }
-      // cout<<haveAste<<endl;
+        // cout<<haveAste<<endl;
 
-        if(haveAste){
-
-
-        }else{
+        if (haveAste) {
 
 
+        } else {
 
-          BT aux;
-          aux.insertSimple('.',NULL, stringToChar(splits[i]));
 
-          mainTree.addLeft(aux);
+            Node * aux;
 
-          mainTree.Dump();
+            aux->value;
+            if (node->left== nullptr){
+                node->left = aux;
+            }else{
+                recursive(node->left,splits);
+            }
+
+
+
 
         }
 
 
-
     }
-
-
-
-
-
-
-/*
-    BT bt;
-    BT bt2;
-    BT pointTree;
-
-    bt.insertSimple('|', 'a', 'b');
-
-    bt2.insertSimple('*', '\0', '\0');
-
-    pointTree.insertSimple('.', '\0', '\0');
-
-    bt2.addLeft(bt);
-    cout << "Tree 1 from OP:\n\n";
-    bt.Dump();
-    cout << "\n\n";
-
-    cout << "Tree 2 from OP:\n\n";
-    bt2.Dump();
-    cout << "\n\n";
-
-    pointTree.addLeft(bt2);
-
-
-    cout << "Tree 2ww from OP:\n\n";
-    pointTree.Dump();
-    cout << "\n\n";
-
-
-    BT merged;
-*/
-
 }
 
 

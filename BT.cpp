@@ -52,9 +52,9 @@ void BT::insertSimple(char rootArg, char leaf1, char leaf2) {
 }
 
 
-void BT::addLeft(const BT& bt) {
+void BT::addLeft(Node *bt) {
 
-    this->root->left = bt.root;
+    this->root->left = bt;
 
 }
 
@@ -284,6 +284,13 @@ void BT::clear() {
 
 const int BT::get_max_depth() const {
     return root ? root->max_depth() : 0;
+}
+
+void BT::insertRoot(Node *newroot) {
+
+    newroot->left=root;
+    root=newroot;
+
 }
 
 
