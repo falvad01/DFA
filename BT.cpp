@@ -293,6 +293,12 @@ void BT::insertRoot(Node *newroot) {
 
 }
 
+void BT::addNode(Node *node) {
+
+    this->root = node;
+
+}
+
 
 
 

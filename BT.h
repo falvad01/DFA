@@ -56,6 +56,7 @@ public:
 
     BT();
     ~BT();
+    void addNode(Node* node);
     void insertSimple(char root, char leaf1, char leaf2);
     void addLeft(Node *bt);
     void addRight(const BT& bt);

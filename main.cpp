@@ -5,7 +5,8 @@
 #include <cstring>
 
 using namespace std;
-void recursive(Node *node, vector<string> splits);
+
+BT *recursive(BT *mainTree, vector<string> splits, int i);
 
 
 vector<string> analiceRe(string re) {
@@ -44,9 +45,9 @@ char stringToChar(string st) {
 
 }
 
-vector<char>stringToCharVector(string st) {
+vector<char> stringToCharVector(string st) {
 
-    vector <char> p;
+    vector<char> p;
 
     for (int i = 0; i < st.size(); i++) {
         p.push_back(st[i]);
@@ -58,7 +59,6 @@ vector<char>stringToCharVector(string st) {
 
 
 int main() {
-    const char *c_str();
 
 
     string re = "(a|b)*.(c|d*).a.d.#";
@@ -71,30 +71,21 @@ int main() {
      * (c|d*)
      * (a|b)*
      */
+
+
     vector<string> splits = analiceRe(re);
 
     for (int i = 0; i < splits.size(); ++i) {
         cout << splits[i] << endl;
     }
 
+    BT *mainTree;
 
 
-   // mainTree.Dump();
-
-   // recursive(mainTree->root,splits);
+    recursive(mainTree, splits, 0);
 
 
-
-
-
-
-
-
-
-
-
-
-
+/*
     BT bt;
 
     bt.root= new Node('z');
@@ -108,55 +99,112 @@ int main() {
     bt.insertRoot(d);
 
 
-
-
-
-
     cout << "Tree 1 from OP:\n\n";
     bt.Dump();
     cout << "\n\n";
 
-
+*/
 
 
 
 }
-void recursive(Node *node, vector<string> splits) {
 
-    for (int i = splits.size() - 1; i >= 0; i--) {
+BT *recursive(BT *mainTree, vector<string> splits, int i) {
 
-        bool haveAste = false;
+    cout<<endl;
+    cout<<endl;
+    cout<<endl;
+    cout<<endl;
+    if (i > 0) {
+        mainTree->insertRoot(new Node('.'));
+    }
 
-        vector<char> charArray = stringToCharVector(splits[i]);
-        for (char j : charArray) {
 
-            if (j == '*') {
-                haveAste = true;
-            }
+
+    cout << splits[i] << endl;
+    vector<char> chars = stringToCharVector(splits[i]);
+
+
+    //Cech if the string have an *
+    bool haveasterisk = false;
+    int asteriskPosition;
+    for (int i = 0; i < chars.size(); i++) {
+
+        if (chars[i] == '*') {
+            haveasterisk = true;
+            asteriskPosition = i;
         }
-        // cout<<haveAste<<endl;
+    }
 
-        if (haveAste) {
 
+    //the part of the RE have an *
+    if (haveasterisk) {
+
+        if (chars[asteriskPosition - 1] == ')') {
+
+            int headPos;
+            for (int i = 0; i < chars.size(); i++) {
+
+                if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
+                    chars[i] == '|') {
+                    mainTree->root = new Node(chars[i]);
+                    headPos = i;
+                }
+            }
+
+            mainTree->root->left = new Node(chars[headPos - 1]);
+            mainTree->root->right = new Node(chars[headPos + 1]);
+            mainTree->insertRoot(new Node('*'));
 
         } else {
 
 
-            Node * aux;
+            int headPos;
+            for (int i = 0; i < chars.size(); i++) {
 
-            aux->value;
-            if (node->left== nullptr){
-                node->left = aux;
-            }else{
-                recursive(node->left,splits);
+                if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
+                    chars[i] == '|') {
+                    mainTree->root = new Node(chars[i]);
+                    headPos = i;
+                }
+            }
+
+            Node *aste = new Node('*');
+            // * at right
+            if (asteriskPosition > headPos) {
+
+                aste->right = new Node(chars[headPos + 1]);
+                mainTree->root->right = aste;
+                mainTree->root->left = new Node(chars[headPos - 1]);
+                // * at right
+            } else if (asteriskPosition < headPos) {
+                aste->left = new Node(chars[headPos - 2]);
+                mainTree->root->left = aste;
+                mainTree->root->right = new Node(chars[headPos + 1]);
             }
 
 
 
 
         }
+        //the part of the RE not have an *
+    } else {
 
 
+    }
+
+
+
+
+    //return recursive(node, splits);
+
+    mainTree->Dump();
+
+    if (i == splits.size() - 1) {
+        return mainTree;
+    } else {
+        i = i + 1;
+        return recursive(mainTree, splits, i);
     }
 }
 
