@@ -61,7 +61,8 @@ vector<char> stringToCharVector(string st) {
 int main() {
 
 
-    string re = "(a|b)*.(c|d*).a.d.#";
+    //string re = "(a|b)*.(c|d*).a.d.#";
+    string re = "(a|b)*.a.b.#";
     /**
      * invert
      *
@@ -111,92 +112,245 @@ int main() {
 
 BT *recursive(BT *mainTree, vector<string> splits, int i) {
 
-    cout<<endl;
-    cout<<endl;
-    cout<<endl;
-    cout<<endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << splits[i] << "-->" << endl;
+
+    //rest of iteractions
     if (i > 0) {
         mainTree->insertRoot(new Node('.'));
-    }
 
+        vector<char> chars = stringToCharVector(splits[i]);
 
+        bool haveParentesis = false;
+        int parentesisPosition;
+        for (int i = 0; i < chars.size(); i++) {
 
-    cout << splits[i] << endl;
-    vector<char> chars = stringToCharVector(splits[i]);
-
-
-    //Cech if the string have an *
-    bool haveasterisk = false;
-    int asteriskPosition;
-    for (int i = 0; i < chars.size(); i++) {
-
-        if (chars[i] == '*') {
-            haveasterisk = true;
-            asteriskPosition = i;
-        }
-    }
-
-
-    //the part of the RE have an *
-    if (haveasterisk) {
-
-        if (chars[asteriskPosition - 1] == ')') {
-
-            int headPos;
-            for (int i = 0; i < chars.size(); i++) {
-
-                if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
-                    chars[i] == '|') {
-                    mainTree->root = new Node(chars[i]);
-                    headPos = i;
-                }
+            if (chars[i] == '(') {
+                haveParentesis = true;
+                parentesisPosition = i;
             }
+        }
 
-            mainTree->root->left = new Node(chars[headPos - 1]);
-            mainTree->root->right = new Node(chars[headPos + 1]);
-            mainTree->insertRoot(new Node('*'));
+
+        //if the sentence have no parentesis the node are without leafs
+        if (!haveParentesis) {
+
+            mainTree->root->right = new Node(chars[0]);
 
         } else {
 
 
-            int headPos;
+
+
+            //Cech if the string have an *
+            bool haveasterisk = false;
+            int asteriskPosition;
             for (int i = 0; i < chars.size(); i++) {
 
-                if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
-                    chars[i] == '|') {
-                    mainTree->root = new Node(chars[i]);
-                    headPos = i;
+                if (chars[i] == '*') {
+                    haveasterisk = true;
+                    asteriskPosition = i;
                 }
             }
 
-            Node *aste = new Node('*');
-            // * at right
-            if (asteriskPosition > headPos) {
 
-                aste->right = new Node(chars[headPos + 1]);
-                mainTree->root->right = aste;
-                mainTree->root->left = new Node(chars[headPos - 1]);
-                // * at right
-            } else if (asteriskPosition < headPos) {
-                aste->left = new Node(chars[headPos - 2]);
-                mainTree->root->left = aste;
-                mainTree->root->right = new Node(chars[headPos + 1]);
+            //the part of the RE have an *
+            if (haveasterisk) {
+
+                if (chars[asteriskPosition - 1] == ')') {
+
+                    int headPos;
+                    for (int i = 0; i < chars.size(); i++) {
+
+                        if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' ||
+                            chars[i] == '+' ||
+                            chars[i] == '|') {
+                            mainTree->root->right = new Node(chars[i]);
+                            headPos = i;
+                        }
+                    }
+
+                    mainTree->root->right->left = new Node(chars[headPos - 1]);
+                    mainTree->root->right->right = new Node(chars[headPos + 1]);
+                    mainTree->insertRoot(new Node('*'));
+
+                } else {
+
+
+                    int headPos;
+                    for (int i = 0; i < chars.size(); i++) {
+
+                        if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' ||
+                            chars[i] == '+' ||
+                            chars[i] == '|') {
+                            mainTree->root->right = new Node(chars[i]);
+                            headPos = i;
+                        }
+                    }
+
+                    Node *aste = new Node('*');
+                    // * at right
+                    if (asteriskPosition > headPos) {
+
+                        aste->right = new Node(chars[headPos + 1]);
+                        mainTree->root->right->right = aste;
+                        mainTree->root->right->left = new Node(chars[headPos - 1]);
+                        // * at right
+                    } else if (asteriskPosition < headPos) {
+                        aste->left = new Node(chars[headPos - 2]);
+                        mainTree->root->right->left = aste;
+                        mainTree->root->right->right = new Node(chars[headPos + 1]);
+                    }
+
+
+                }
+                //the part of the RE not have an *
+            } else {
+
+
+                int headPos;
+                for (int i = 0; i < chars.size(); i++) {
+
+                    if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
+                        chars[i] == '|') {
+                        mainTree->root->right = new Node(chars[i]);
+                        headPos = i;
+                    }
+                }
+
+                mainTree->root->right->left = new Node(chars[headPos - 1]);
+                mainTree->root->right->right = new Node(chars[headPos + 1]);
+
+
             }
 
 
+        }
+
+
+
+
+
+
+
+      //Only first iteractoin (i == 0)
+    }
+    else {
+
+
+
+        vector<char> chars = stringToCharVector(splits[i]);
+
+        bool haveParentesis = false;
+        int parentesisPosition;
+        for (int i = 0; i < chars.size(); i++) {
+
+            if (chars[i] == '(') {
+                haveParentesis = true;
+                parentesisPosition = i;
+            }
+        }
+
+
+        //if the sentence have no parentesis the node are without leafs
+        if (!haveParentesis) {
+
+            mainTree->root = new Node(chars[0]);
+
+        } else {
+
+
+
+
+            //Cech if the string have an *
+            bool haveasterisk = false;
+            int asteriskPosition;
+            for (int i = 0; i < chars.size(); i++) {
+
+                if (chars[i] == '*') {
+                    haveasterisk = true;
+                    asteriskPosition = i;
+                }
+            }
+
+
+            //the part of the RE have an *
+            if (haveasterisk) {
+
+                if (chars[asteriskPosition - 1] == ')') {
+
+                    int headPos;
+                    for (int i = 0; i < chars.size(); i++) {
+
+                        if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' ||
+                            chars[i] == '+' ||
+                            chars[i] == '|') {
+                            mainTree->root = new Node(chars[i]);
+                            headPos = i;
+                        }
+                    }
+
+                    mainTree->root->left = new Node(chars[headPos - 1]);
+                    mainTree->root->right = new Node(chars[headPos + 1]);
+                    mainTree->insertRoot(new Node('*'));
+
+                } else {
+
+
+                    int headPos;
+                    for (int i = 0; i < chars.size(); i++) {
+
+                        if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' ||
+                            chars[i] == '+' ||
+                            chars[i] == '|') {
+                            mainTree->root = new Node(chars[i]);
+                            headPos = i;
+                        }
+                    }
+
+                    Node *aste = new Node('*');
+                    // * at right
+                    if (asteriskPosition > headPos) {
+
+                        aste->right = new Node(chars[headPos + 1]);
+                        mainTree->root->right = aste;
+                        mainTree->root->left = new Node(chars[headPos - 1]);
+                        // * at right
+                    } else if (asteriskPosition < headPos) {
+                        aste->left = new Node(chars[headPos - 2]);
+                        mainTree->root->left = aste;
+                        mainTree->root->right = new Node(chars[headPos + 1]);
+                    }
+
+
+                }
+                //the part of the RE not have an *
+            } else {
+
+
+                int headPos;
+                for (int i = 0; i < chars.size(); i++) {
+
+                    if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
+                        chars[i] == '|') {
+                        mainTree->root = new Node(chars[i]);
+                        headPos = i;
+                    }
+                }
+
+                mainTree->root->left = new Node(chars[headPos - 1]);
+                mainTree->root->right = new Node(chars[headPos + 1]);
+
+
+            }
 
 
         }
-        //the part of the RE not have an *
-    } else {
-
 
     }
-
-
-
-
-    //return recursive(node, splits);
 
     mainTree->Dump();
 
