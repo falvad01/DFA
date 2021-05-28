@@ -6,6 +6,8 @@
 #define DFAQT_MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTreeWidgetItem>
+#include "BT.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +27,11 @@ private slots:
 
 private:
     Ui::mainwindow *ui;
+    BT recursive(BT mainTree, vector<string> splits, int i);
+    vector<string> analiceRe(string re);
+    vector<char> stringToCharVector(string st);
+    char stringToChar(string st);
+
 };
 
 

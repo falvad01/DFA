@@ -254,13 +254,13 @@ void BT::trim_rows_left(vector<string> &rows) {
 }
 
 
-void BT::Dump() const {
+string BT::Dump() const {
     const int d = get_max_depth();
 
     // If this tree is empty, tell someone
     if (d == 0) {
         cout << " <empty tree>\n";
-        return;
+        return "";
     }
 
     // This tree is not empty, so get a list of node values...
@@ -270,9 +270,14 @@ void BT::Dump() const {
     // then trim excess space characters from the left sides of the text...
     trim_rows_left(formatted_rows);
     // then dump the text to cout.
+
+    stringstream ret;
     for (const auto &row : formatted_rows) {
-        cout << ' ' << row << '\n';
+        ret << row<< '\n';
+      //  cout << ' ' << row << '\n';
     }
+
+    return ret.str();
 }
 
 

@@ -65,7 +65,7 @@ public:
     void insertRoot(Node* newroot);
     void clear();
     display_rows get_row_display() const;
-    void Dump() const;
+    string Dump() const;
     const int get_max_depth() const;
 
 

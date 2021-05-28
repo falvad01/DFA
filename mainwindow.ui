@@ -27,39 +27,6 @@
                     <string>Enter</string>
                 </property>
             </widget>
-            <widget class="QScrollArea" name="scrollArea">
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>40</y>
-                        <width>761</width>
-                        <height>441</height>
-                    </rect>
-                </property>
-                <property name="widgetResizable">
-                    <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents">
-                    <property name="geometry">
-                        <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>759</width>
-                            <height>439</height>
-                        </rect>
-                    </property>
-                    <widget class="QTextBrowser" name="textBrowser">
-                        <property name="geometry">
-                            <rect>
-                                <x>0</x>
-                                <y>10</y>
-                                <width>751</width>
-                                <height>421</height>
-                            </rect>
-                        </property>
-                    </widget>
-                </widget>
-            </widget>
             <widget class="QLineEdit" name="input">
                 <property name="geometry">
                     <rect>
@@ -67,6 +34,16 @@
                         <y>10</y>
                         <width>541</width>
                         <height>25</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QTextEdit" name="textEdit">
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>771</width>
+                        <height>451</height>
                     </rect>
                 </property>
             </widget>
