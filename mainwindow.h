@@ -7,7 +7,10 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include <sstream>
 #include "BT.h"
+
+using namespace std;
 
 
 QT_BEGIN_NAMESPACE
@@ -27,10 +30,12 @@ private slots:
 
 private:
     Ui::mainwindow *ui;
-    BT recursive(BT mainTree, vector<string> splits, int i);
+    BT recursive(BT mainTree, vector<string> splits, int i,int pos);
     vector<string> analiceRe(string re);
     vector<char> stringToCharVector(string st);
     char stringToChar(string st);
+
+    stringstream firstAndLast;
 
 };
 

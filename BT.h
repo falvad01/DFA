@@ -32,8 +32,12 @@ class Node{
 public:
     char value;
     Node *left, *right;
+    vector<int> firstPos;
+    vector<int> lastPost;
 
-    Node() : left(nullptr), right(nullptr) {}
+    Node() : left(nullptr), right(nullptr) {
+
+    }
 
     Node(const char &value) : value(value), left(nullptr), right(nullptr) {}
 
@@ -43,6 +47,9 @@ public:
         const int right_depth = right ? right->max_depth() : 0;
         return (left_depth > right_depth ? left_depth : right_depth) + 1;
     }
+
+
+
 };
 
 class BT {
