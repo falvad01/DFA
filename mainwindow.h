@@ -37,12 +37,14 @@ private:
     QTextEdit *br2;
 
     Ui::mainwindow *ui;
-    bool recursive(vector<string> splits, int i,int pos);
+    bool recursive(vector<string> splits, int i,int pos,int followPosPos);
     vector<string> analiceRe(string re);
     vector<char> stringToCharVector(string st);
     char stringToChar(string st);
 
     stringstream firstAndLast;
+
+    vector<vector<int>> followPos;
 
 };
 

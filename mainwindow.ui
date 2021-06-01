@@ -57,6 +57,32 @@
                     </rect>
                 </property>
             </widget>
+            <widget class="QTableWidget" name="tableWidget">
+                <property name="geometry">
+                    <rect>
+                        <x>370</x>
+                        <y>40</y>
+                        <width>221</width>
+                        <height>291</height>
+                    </rect>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                    <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                </attribute>
+                <column>
+                    <property name="text">
+                        <string>Node</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>FollowPos</string>
+                    </property>
+                </column>
+            </widget>
         </widget>
         <widget class="QMenuBar" name="menubar">
             <property name="geometry">

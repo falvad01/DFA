@@ -36,8 +36,9 @@ mainwindow::~mainwindow() {
 
 void mainwindow::on_button_clicked() {
 
-    string re = "(a|b)*.(c+d).d.#";
-    // string re = "(a|b)*.a.b.b.#";
+    //string re = "(a|b)*.(c+d).a.d.#";
+    string re = "(a|b)*.a.b.b.#";
+    //string re = "((a|b)*+(a.c)*).#";
     /**
      * invert
      *
@@ -56,17 +57,36 @@ void mainwindow::on_button_clicked() {
     }
 
 
-    recursive(splits, 0, 1);
+    recursive(splits, 0, 1, 0);
 
-
-    cout << "sale" << endl;
-    cout << "sale" << endl;
     cout << "sale" << endl;
 
 
+
+    QTableWidget *table = ui->tableWidget;
+
+    table->setRowCount(followPos.size());
+
+    for (int i = 0; i < followPos.size(); i++) {
+
+        stringstream ss;
+        for (int j = 0; j < followPos[i].size(); j++) {
+
+            ss << followPos[i][j] << ", ";
+        }
+        cout<<ss.str()<<endl;
+        QTableWidgetItem *newItem = new QTableWidgetItem(tr("%3").arg(QString::fromStdString(ss.str())));
+        table->setItem(i, 0, new QTableWidgetItem(QString::number(i+1)));
+        table->setItem(i, 1, newItem);
+
+    }
+
+    //  table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    table->show();
 }
 
-bool mainwindow::recursive(vector<string> splits, int i, int pos) {
+bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosPos) {
 
     cout << endl;
     cout << endl;
@@ -421,6 +441,7 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos) {
 
     cout << "esto: " << mainTree.root->left->value << endl;
 
+    //////////////////first and last position to * and .
     if (mainTree.root->left->value == '*') {
 
         vector<int> a = mainTree.root->left->firstPos;
@@ -428,16 +449,16 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos) {
         stringstream first;
         stringstream last;
 
-        for (int j = 0; j < a.size(); j++) {
-            mainTree.root->firstPos.push_back(a[j]);
-            first << a[j] << " ";
+        for (int &j : a) {
+            mainTree.root->firstPos.push_back(j);
+            first << j << " ";
         }
         vector<int> b = mainTree.root->right->firstPos;
-        for (int j = 0; j < b.size(); j++) {
-            mainTree.root->firstPos.push_back(b[j]);
-            mainTree.root->lastPost.push_back(b[j]);
-            first << b[j] << " ";
-            last << b[j] << " ";
+        for (int &j : b) {
+            mainTree.root->firstPos.push_back(j);
+            mainTree.root->lastPost.push_back(j);
+            first << j << " ";
+            last << j << " ";
         }
 
         firstAndLast << mainTree.root->value << " --> " << "first: " << first.str() << " last: " << last.str() << endl;
@@ -463,9 +484,47 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos) {
 
     }
 
+    cout << "EL VALOR ES: " << mainTree.root->value << endl;
+
+    /////////////////////////follow positions
+
+    if (mainTree.root->value == '*') {
+
+        followPos.push_back(mainTree.root->firstPos);
+        followPosPos++;
+        followPos.push_back(mainTree.root->firstPos);
+        followPosPos++;
+    } else if (mainTree.root->value == '.') {
+
+
+        if (mainTree.root->left->value == '*') {
+            for (int &firstPo : mainTree.root->right->firstPos) {
+
+                followPos[followPosPos - 2].push_back(firstPo);
+                followPos[followPosPos - 1].push_back(firstPo);
+            }
+
+        } else if (mainTree.root->left->value == '.') {
+
+            if (followPos.size() <= followPosPos - 1) {
+                followPos.push_back(mainTree.root->right->firstPos);
+            } else {
+
+                for (int &firstPo : mainTree.root->right->firstPos) {
+
+                    followPos[followPosPos - 1].push_back(firstPo);
+
+                }
+            }
+
+        }
+        cout << followPosPos << endl;
+        followPosPos++;
+    }
+
 
     string sa = mainTree.Dump();
-    cout << sa << endl;
+    // cout << sa << endl;
 
 
 
@@ -473,16 +532,16 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos) {
     br->show();
     update();
 
-    sleep(4);
+    //sleep(4);
 
     if (i == splits.size() - 1) {
-        cout << firstAndLast.str() << endl;
+        // cout << firstAndLast.str() << endl;
         br2->append(QString::fromStdString(firstAndLast.str()));
         br2->show();
         return true;
     } else {
         i++;
-        return recursive(splits, i, pos);
+        return recursive(splits, i, pos, followPosPos);
     }
 }
 
