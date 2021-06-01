@@ -79,7 +79,7 @@ public:
 private:
 
     vector<string> row_formatter(const vector<vector<cell_display>> &rows_disp) const;
-
+    void DestroyRecursive(Node *node);
     static void trim_rows_left(vector<string> &rows);
 };
 

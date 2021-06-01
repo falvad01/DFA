@@ -19,7 +19,7 @@ BT::BT() : root(nullptr) {}
 
 
 BT::~BT() {
-    delete root;
+    DestroyRecursive(root);
 }
 
 template<typename ...Args>
@@ -302,6 +302,16 @@ void BT::addNode(Node *node) {
 
     this->root = node;
 
+}
+
+void BT::DestroyRecursive(Node *node)
+{
+    if (node)
+    {
+        DestroyRecursive(node->left);
+        DestroyRecursive(node->right);
+        delete node;
+    }
 }
 
 

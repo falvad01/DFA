@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <sstream>
+#include <QTextEdit>
 #include "BT.h"
 
 using namespace std;
@@ -29,8 +30,14 @@ private slots:
     void on_button_clicked();
 
 private:
+
+    BT mainTree;
+
+    QTextEdit *br;
+    QTextEdit *br2;
+
     Ui::mainwindow *ui;
-    BT recursive(BT mainTree, vector<string> splits, int i,int pos);
+    bool recursive(vector<string> splits, int i,int pos);
     vector<string> analiceRe(string re);
     vector<char> stringToCharVector(string st);
     char stringToChar(string st);

@@ -37,13 +37,23 @@
                     </rect>
                 </property>
             </widget>
-            <widget class="QTextEdit" name="textEdit">
+            <widget class="QTextBrowser" name="textEdit">
                 <property name="geometry">
                     <rect>
                         <x>10</x>
-                        <y>50</y>
-                        <width>771</width>
-                        <height>451</height>
+                        <y>40</y>
+                        <width>350</width>
+                        <height>300</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QTextBrowser" name="textEdit_2">
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>350</y>
+                        <width>350</width>
+                        <height>200</height>
                     </rect>
                 </property>
             </widget>

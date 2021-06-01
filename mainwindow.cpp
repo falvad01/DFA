@@ -20,6 +20,14 @@ using namespace std;
 mainwindow::mainwindow(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::mainwindow) {
     ui->setupUi(this);
+
+    br = new QTextEdit(ui->textEdit);
+    br2 = new QTextEdit(ui->textEdit_2);
+    br->setMinimumHeight(300);
+    br->setMinimumWidth(350);
+
+    br2->setMinimumHeight(300);
+    br2->setMinimumWidth(350);
 }
 
 mainwindow::~mainwindow() {
@@ -28,8 +36,8 @@ mainwindow::~mainwindow() {
 
 void mainwindow::on_button_clicked() {
 
-    string re = "(a|b)*.(c|d*).d.#";
-    // string re = "a.b.c.(a|b)*.a.b.#";
+    string re = "(a|b)*.(c+d).d.#";
+    // string re = "(a|b)*.a.b.b.#";
     /**
      * invert
      *
@@ -47,18 +55,18 @@ void mainwindow::on_button_clicked() {
         cout << split << endl;
     }
 
-    BT mainTree;
-    BT mainTree2;
 
-    mainTree = recursive(mainTree, splits, 0, 1);
+    recursive(splits, 0, 1);
 
 
+    cout << "sale" << endl;
+    cout << "sale" << endl;
     cout << "sale" << endl;
 
 
 }
 
-BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
+bool mainwindow::recursive(vector<string> splits, int i, int pos) {
 
     cout << endl;
     cout << endl;
@@ -69,6 +77,7 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
     //rest of iteractions
     if (i > 0) {
         mainTree.insertRoot(new Node('.'));
+
 
         vector<char> chars = stringToCharVector(splits[i]);
 
@@ -121,6 +130,9 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root->right = new Node(chars[i]);
+                            mainTree.root->right->lastPost.push_back(pos);
+                            mainTree.root->right->lastPost.push_back(pos + 1);
+                            firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                             headPos = i;
                         }
                     }
@@ -136,9 +148,14 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                     firstAndLast << chars[headPos + 1] << " --> " << pos << endl;
                     pos++;
                     mainTree.insertRoot(new Node('*')); //TODO revisar
+                    mainTree.root->firstPos.push_back(pos - 2);
+                    mainTree.root->firstPos.push_back(pos - 1);
+
+                    mainTree.root->lastPost.push_back(pos - 2);
+                    mainTree.root->lastPost.push_back(pos - 1);
 
 
-
+                    //asterisk is not with a )
                 } else {
 
 
@@ -149,6 +166,9 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root->right = new Node(chars[i]);
+                            mainTree.root->right->lastPost.push_back(pos);
+                            mainTree.root->right->lastPost.push_back(pos + 1);
+                            firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                             headPos = i;
                         }
                     }
@@ -196,6 +216,11 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                     if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
                         chars[i] == '|') {
                         mainTree.root->right = new Node(chars[i]);
+                        mainTree.root->right->lastPost.push_back(pos);
+                        mainTree.root->right->lastPost.push_back(pos + 1);
+                        mainTree.root->right->firstPos.push_back(pos);
+                        mainTree.root->right->firstPos.push_back(pos + 1);
+                        firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                         headPos = i;
                     }
                 }
@@ -214,6 +239,10 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
             }
 
         }
+
+
+
+
 
 
 
@@ -276,6 +305,9 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root = new Node(chars[i]); // add the parent
+                            mainTree.root->lastPost.push_back(pos);
+                            mainTree.root->lastPost.push_back(pos + 1);
+                            firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                             headPos = i;
                         }
                     }
@@ -291,6 +323,11 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                     firstAndLast << chars[headPos + 1] << " --> " << pos << endl;
                     pos++;
                     mainTree.insertRoot(new Node('*'));//TODO revisar
+                    mainTree.root->firstPos.push_back(pos - 2);
+                    mainTree.root->firstPos.push_back(pos - 1);
+
+                    mainTree.root->lastPost.push_back(pos - 2);
+                    mainTree.root->lastPost.push_back(pos - 1);
 
 
                     //asterisk not englove all parenthesis
@@ -304,6 +341,9 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root = new Node(chars[i]);
+                            mainTree.root->lastPost.push_back(pos);
+                            mainTree.root->lastPost.push_back(pos + 1);
+                            firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                             headPos = i;
                         }
                     }
@@ -325,7 +365,7 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                         mainTree.root->left->firstPos.push_back(pos);
                         mainTree.root->left->lastPost.push_back(pos);
                         firstAndLast << chars[headPos - 1] << " --> " << pos << endl;
-                        pos +=2;
+                        pos += 2;
                         // * at right
                     } else if (asteriskPosition < headPos) {
                         aste->left = new Node(chars[headPos - 2]);
@@ -354,6 +394,9 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
                     if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
                         chars[i] == '|') {
                         mainTree.root = new Node(chars[i]);
+                        mainTree.root->lastPost.push_back(pos);
+                        mainTree.root->lastPost.push_back(pos + 1);
+                        firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
                         headPos = i;
                     }
                 }
@@ -375,22 +418,71 @@ BT mainwindow::recursive(BT mainTree, vector<string> splits, int i, int pos) {
         }
 
     }
+
+    cout << "esto: " << mainTree.root->left->value << endl;
+
+    if (mainTree.root->left->value == '*') {
+
+        vector<int> a = mainTree.root->left->firstPos;
+
+        stringstream first;
+        stringstream last;
+
+        for (int j = 0; j < a.size(); j++) {
+            mainTree.root->firstPos.push_back(a[j]);
+            first << a[j] << " ";
+        }
+        vector<int> b = mainTree.root->right->firstPos;
+        for (int j = 0; j < b.size(); j++) {
+            mainTree.root->firstPos.push_back(b[j]);
+            mainTree.root->lastPost.push_back(b[j]);
+            first << b[j] << " ";
+            last << b[j] << " ";
+        }
+
+        firstAndLast << mainTree.root->value << " --> " << "first: " << first.str() << " last: " << last.str() << endl;
+
+
+    } else if (mainTree.root->left->value == '.') {
+
+        stringstream first;
+        stringstream last;
+        vector<int> a = mainTree.root->left->firstPos;
+
+        for (int &j : a) {
+            mainTree.root->firstPos.push_back(j);
+            first << j << " ";
+        }
+        vector<int> b = mainTree.root->right->firstPos;
+        for (int &j : b) {
+            mainTree.root->lastPost.push_back(j);
+            last << j << " ";
+        }
+
+        firstAndLast << mainTree.root->value << " --> " << "first: " << first.str() << " last: " << last.str() << endl;
+
+    }
+
+
     string sa = mainTree.Dump();
     cout << sa << endl;
 
-    //  QTextEdit *br = new QTextEdit(ui->textEdit);
 
-    //  br->setText(QString::fromStdString(sa));
 
-    //   br->show();
-    // sleep(2);
+    br->append(QString::fromStdString(sa));
+    br->show();
+    update();
+
+    sleep(4);
 
     if (i == splits.size() - 1) {
         cout << firstAndLast.str() << endl;
-        return mainTree;
+        br2->append(QString::fromStdString(firstAndLast.str()));
+        br2->show();
+        return true;
     } else {
-        i ++;
-        return recursive(mainTree, splits, i, pos);
+        i++;
+        return recursive(splits, i, pos);
     }
 }
 
