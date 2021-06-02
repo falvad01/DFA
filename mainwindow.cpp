@@ -12,7 +12,7 @@
 #include <vector>
 #include "BT.h"
 #include <unistd.h>
-#include <sstream>
+
 
 using namespace std;
 
@@ -21,13 +21,9 @@ mainwindow::mainwindow(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::mainwindow) {
     ui->setupUi(this);
 
-    br = new QTextEdit(ui->textEdit);
-    br2 = new QTextEdit(ui->textEdit_2);
-    br->setMinimumHeight(300);
-    br->setMinimumWidth(350);
+    br = ui->textEdit;
+    br2 = ui->textEdit_2;
 
-    br2->setMinimumHeight(300);
-    br2->setMinimumWidth(350);
 }
 
 mainwindow::~mainwindow() {
@@ -36,8 +32,16 @@ mainwindow::~mainwindow() {
 
 void mainwindow::on_button_clicked() {
 
+    QString re = ui->input->text();
+    string resrt = re.toStdString();
+
+
+
+
+
+
     //string re = "(a|b)*.(c+d).a.d.#";
-    string re = "(a|b)*.a.b.b.#";
+    // string re = "(a|b)*.a.b.b.#";
     //string re = "((a|b)*+(a.c)*).#";
     /**
      * invert
@@ -49,41 +53,116 @@ void mainwindow::on_button_clicked() {
      * (a|b)*
      */
 
+    vector<string> splits = analiceRe(resrt);
 
-    vector<string> splits = analiceRe(re);
+    vector<char> chars = this->stringToCharVector(resrt);
 
-    for (auto &split : splits) {
-        cout << split << endl;
-    }
+    int parethesisIn = 0;
+    int parethesisOut = 0;
+    bool symbolsToguether = false;
+    for (int i = 0; i < chars.size(); i++) {
 
-
-    recursive(splits, 0, 1, 0);
-
-    cout << "sale" << endl;
-
-
-
-    QTableWidget *table = ui->tableWidget;
-
-    table->setRowCount(followPos.size());
-
-    for (int i = 0; i < followPos.size(); i++) {
-
-        stringstream ss;
-        for (int j = 0; j < followPos[i].size(); j++) {
-
-            ss << followPos[i][j] << ", ";
+        if (chars[i] == '(') {
+            parethesisIn++;
         }
-        cout<<ss.str()<<endl;
-        QTableWidgetItem *newItem = new QTableWidgetItem(tr("%3").arg(QString::fromStdString(ss.str())));
-        table->setItem(i, 0, new QTableWidgetItem(QString::number(i+1)));
-        table->setItem(i, 1, newItem);
+
+        if (chars[i] == ')') {
+            parethesisOut++;
+        }
+
+        if (i == 0) {
+            if ((chars[0] == '(' || chars[0] == ')' || chars[0] == '^' || chars[0] == '$' || chars[0] == '\\' ||
+                 chars[0] == '?' || chars[0] == '+' || chars[0] == '|' || chars[0] == '.')
+                &&
+                (chars[1] == '.' || chars[1] == '(' || chars[1] == ')' || chars[1] == '^' || chars[1] == '$' ||
+                 chars[1] == '\\' ||
+                 chars[1] == '?' ||
+                 chars[1] == '+' ||
+                 chars[1] == '|')) {
+
+                symbolsToguether = true;
+            }
+        } else if (i == chars.size() - 1) {
+            if ((chars[i] == '(' || chars[i] == ')' || chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' ||
+                 chars[i] == '?' || chars[i] == '+' || chars[i] == '|' || chars[i] == '.')
+                &&
+                (chars[i + 1] == '.' || chars[i + 1] == '(' || chars[i + 1] == ')' || chars[i + 1] == '^' ||
+                 chars[i + 1] == '$' ||
+                 chars[i + 1] == '\\' ||
+                 chars[i + 1] == '?' ||
+                 chars[i + 1] == '+' ||
+                 chars[i + 1] == '|')) {
+
+                symbolsToguether = true;
+            }
+        } else {
+
+            if ((chars[chars.size() - 1] == '(' || chars[chars.size() - 1] == ')' || chars[chars.size() - 1] == '^' ||
+                 chars[chars.size() - 1] == '$' || chars[chars.size() - 1] == '\\' ||
+                 chars[chars.size() - 1] == '?' || chars[chars.size() - 1] == '+' || chars[chars.size() - 1] == '|' || chars[chars.size() - 1] == '.')
+                &&
+                (chars[chars.size() - 2] == '.' || chars[chars.size() - 2] == '(' || chars[chars.size() - 2] == ')' ||
+                 chars[chars.size() - 2] == '^' ||
+                 chars[chars.size() - 2] == '$' ||
+                 chars[chars.size() - 2] == '\\' ||
+                 chars[chars.size() - 2] == '?' ||
+                 chars[chars.size() - 2] == '+' ||
+                 chars[chars.size() - 2] == '|')) {
+
+                symbolsToguether = true;
+            }
+
+        }
 
     }
 
-    //  table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    table->show();
+    if (splits[splits.size() - 1] != "#") {
+
+        ui->errorLabel->setText("<font color='red'>NO # at the end</font>");
+
+
+    } else if (parethesisIn != parethesisOut) {
+        ui->errorLabel->setText("<font color='red'>Missing ( or )</font>");
+
+    } else if (symbolsToguether) {
+        ui->errorLabel->setText("<font color='red'>Bad using of the symbols</font>");
+    } else {
+
+
+        for (auto &split : splits) {
+            cout << split << endl;
+        }
+
+
+        recursive(splits, 0, 1, 0);
+
+        cout << "sale" << endl;
+
+
+        QTableWidget *table = ui->tableWidget;
+
+        table->setRowCount(followPos.size());
+
+        for (int i = 0; i < followPos.size(); i++) {
+
+            stringstream ss;
+            for (int j = 0; j < followPos[i].size(); j++) {
+
+                ss << followPos[i][j] << ", ";
+            }
+            cout << ss.str() << endl;
+            QTableWidgetItem *newItem = new QTableWidgetItem(tr("%3").arg(QString::fromStdString(ss.str())));
+            table->setItem(i, 0, new QTableWidgetItem(QString::number(i + 1)));
+            table->setItem(i, 1, newItem);
+
+        }
+
+        //  table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+        table->show();
+
+    }
 }
 
 bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosPos) {
@@ -532,12 +611,12 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
     br->show();
     update();
 
-    //sleep(4);
 
     if (i == splits.size() - 1) {
         // cout << firstAndLast.str() << endl;
-        br2->append(QString::fromStdString(firstAndLast.str()));
-        br2->show();
+        ui->textEdit_2->append(QString::fromStdString(firstAndLast.str()));
+        ui->textEdit_2->show();
+        update();
         return true;
     } else {
         i++;
@@ -593,3 +672,15 @@ vector<char> mainwindow::stringToCharVector(string st) {
 
 }
 
+
+void mainwindow::on_pushButton_clicked()
+{
+
+    br->clear();
+    br2->clear();
+    while (ui->tableWidget->rowCount() > 0)
+    {
+        ui->tableWidget->removeRow(0);
+    }
+
+}
