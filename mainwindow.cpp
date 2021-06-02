@@ -42,7 +42,9 @@ void mainwindow::on_button_clicked() {
 
     //string re = "(a|b)*.(c+d).a.d.#";
     // string re = "(a|b)*.a.b.b.#";
-    //string re = "((a|b)*+(a.c)*).#";
+
+   // (a|b)*.(c+d*).(c*^d).a.d.#
+
     /**
      * invert
      *
@@ -99,7 +101,8 @@ void mainwindow::on_button_clicked() {
 
             if ((chars[chars.size() - 1] == '(' || chars[chars.size() - 1] == ')' || chars[chars.size() - 1] == '^' ||
                  chars[chars.size() - 1] == '$' || chars[chars.size() - 1] == '\\' ||
-                 chars[chars.size() - 1] == '?' || chars[chars.size() - 1] == '+' || chars[chars.size() - 1] == '|' || chars[chars.size() - 1] == '.')
+                 chars[chars.size() - 1] == '?' || chars[chars.size() - 1] == '+' || chars[chars.size() - 1] == '|' ||
+                 chars[chars.size() - 1] == '.')
                 &&
                 (chars[chars.size() - 2] == '.' || chars[chars.size() - 2] == '(' || chars[chars.size() - 2] == ')' ||
                  chars[chars.size() - 2] == '^' ||
@@ -229,6 +232,8 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root->right = new Node(chars[i]);
+                            mainTree.root->right->firstPos.push_back(pos);
+                            mainTree.root->right->firstPos.push_back(pos + 1);
                             mainTree.root->right->lastPost.push_back(pos);
                             mainTree.root->right->lastPost.push_back(pos + 1);
                             firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
@@ -265,6 +270,8 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root->right = new Node(chars[i]);
+                            mainTree.root->right->firstPos.push_back(pos);
+                            mainTree.root->right->firstPos.push_back(pos + 1);
                             mainTree.root->right->lastPost.push_back(pos);
                             mainTree.root->right->lastPost.push_back(pos + 1);
                             firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
@@ -404,6 +411,8 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root = new Node(chars[i]); // add the parent
+                            mainTree.root->firstPos.push_back(pos);
+                            mainTree.root->firstPos.push_back(pos + 1);
                             mainTree.root->lastPost.push_back(pos);
                             mainTree.root->lastPost.push_back(pos + 1);
                             firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
@@ -440,6 +449,8 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                             chars[i] == '+' ||
                             chars[i] == '|') {
                             mainTree.root = new Node(chars[i]);
+                            mainTree.root->firstPos.push_back(pos);
+                            mainTree.root->firstPos.push_back(pos + 1);
                             mainTree.root->lastPost.push_back(pos);
                             mainTree.root->lastPost.push_back(pos + 1);
                             firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
@@ -493,6 +504,8 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                     if (chars[i] == '^' || chars[i] == '$' || chars[i] == '\\' || chars[i] == '?' || chars[i] == '+' ||
                         chars[i] == '|') {
                         mainTree.root = new Node(chars[i]);
+                        mainTree.root->firstPos.push_back(pos);
+                        mainTree.root->firstPos.push_back(pos + 1);
                         mainTree.root->lastPost.push_back(pos);
                         mainTree.root->lastPost.push_back(pos + 1);
                         firstAndLast << chars[i] << " --> " << pos << " " << pos + 1 << endl;
@@ -563,7 +576,7 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
 
     }
 
-    cout << "EL VALOR ES: " << mainTree.root->value << endl;
+    cout << "EL VALOR ES: " << mainTree.root->value <<"y "<<followPosPos << endl;
 
     /////////////////////////follow positions
 
@@ -583,10 +596,37 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
                 followPos[followPosPos - 1].push_back(firstPo);
             }
 
+
+
+
+
         } else if (mainTree.root->left->value == '.') {
 
             if (followPos.size() <= followPosPos - 1) {
                 followPos.push_back(mainTree.root->right->firstPos);
+
+                if(mainTree.root->left->left->right != nullptr) {
+                    if (mainTree.root->left->left->right->right != nullptr) {
+                        if (mainTree.root->left->left->right->right->value == '*') {
+
+                            for (int &firstPo : mainTree.root->left->left->right->right->firstPos) {
+
+                                followPos[followPosPos - 1].push_back(firstPo);
+
+                            }
+
+
+                        } else if (mainTree.root->left->left->right->left->value == '*') {
+
+                            for (int &firstPo : mainTree.root->left->left->right->left->firstPos) {
+
+                                followPos[followPosPos - 1].push_back(firstPo);
+
+                            }
+                        }
+                    }
+                }
+
             } else {
 
                 for (int &firstPo : mainTree.root->right->firstPos) {
@@ -611,12 +651,12 @@ bool mainwindow::recursive(vector<string> splits, int i, int pos, int followPosP
     br->show();
     update();
 
+    //sleep(4);
 
     if (i == splits.size() - 1) {
         // cout << firstAndLast.str() << endl;
-        ui->textEdit_2->append(QString::fromStdString(firstAndLast.str()));
-        ui->textEdit_2->show();
-        update();
+        br2->append(QString::fromStdString(firstAndLast.str()));
+        br2->show();
         return true;
     } else {
         i++;
@@ -673,13 +713,11 @@ vector<char> mainwindow::stringToCharVector(string st) {
 }
 
 
-void mainwindow::on_pushButton_clicked()
-{
+void mainwindow::on_pushButton_clicked() {
 
     br->clear();
     br2->clear();
-    while (ui->tableWidget->rowCount() > 0)
-    {
+    while (ui->tableWidget->rowCount() > 0) {
         ui->tableWidget->removeRow(0);
     }
 
